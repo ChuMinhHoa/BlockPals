@@ -1,13 +1,12 @@
 using System;
+using Cysharp.Threading.Tasks;
+using R3;
 using Sirenix.OdinInspector;
 using UnityEngine;
-
-
-
 public class Node : MonoBehaviour
 {
     
-    private static readonly SubNodeOffset[] DefaultSubNodeOffsets =
+    public static readonly SubNodeOffset[] DefaultSubNodeOffsets =
     {
         new(0, 1),
         new(0, -1),
@@ -20,6 +19,18 @@ public class Node : MonoBehaviour
     };
     
     public Reactive<bool> able = new(true);
+    [SerializeField] private SpriteRenderer sprRenderer;
+    [SerializeField] private Sprite[] graphics;
+
+    private void Start()
+    {
+        able.Subscribe(ChangeAble).AddTo(this);
+    }
+
+    private void ChangeAble(bool ableChange)
+    {
+        sprRenderer.sprite = able? graphics[0] : graphics[1];
+    }
 }
 
 [Serializable]

@@ -1,3 +1,5 @@
+using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public partial class UnitCube
@@ -10,16 +12,31 @@ public partial class UnitCube
     [Range(0, 10f)]
     [SerializeField] public float rotateSpeed;
 
-    private Vector3 targetPosition;
+    public Vector3 targetPosition;
+
+    [SerializeField] private UniCubePathFinding uniCubePathFinding;
     
+    private int currentPathIndex = 0;
+    
+    private Action actionMoveCallBack;
+    
+    
+    [Button]
     public UnitCube WithTarget(Vector3 target)
     {
         targetPosition = target;
         return this;
     }
 
-    public void StartMove()
+    [Button]
+    public void GetPathWayPoints()
     {
-        
+        uniCubePathFinding.GetPathWaypoints(targetPosition);
+    }
+
+    public UnitCube WithActionMoveCallBack(Action action)
+    {
+        actionMoveCallBack = action;
+        return this;
     }
 }
