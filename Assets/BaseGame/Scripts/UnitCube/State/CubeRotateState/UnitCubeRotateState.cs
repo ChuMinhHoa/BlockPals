@@ -58,7 +58,6 @@ public partial class UnitCube : UnitCubeRotateState.IUnitCubeHandle
     {
         var dir = Vector3.forward;
         dir.y = 0f;
-        Debug.Log(dir);
         if (dir.sqrMagnitude > 0.001f)
         {
             var look = Quaternion.LookRotation(dir);
