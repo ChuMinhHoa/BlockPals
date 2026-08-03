@@ -30,7 +30,7 @@ public partial class UnitCube : MonoBehaviour, IClickAble
     
     public void OnClick()
     {
-        Debug.Log("Unit cube on click");
+        //Debug.Log("Unit cube on click");
         if (unitCubeStatus ==  UnitCubeStatus.Able)
         {
             SpaceManager.Instance.RegisterClickOnCube(this, ActionGetSpaceCallBack);

@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TW.Utility.DesignPattern;
+using UnityEditor;
 using UnityEngine;
 
 public class Map : Singleton<Map>
@@ -12,9 +16,51 @@ public class Map : Singleton<Map>
 
     private readonly Dictionary<Node, Vector2Int> nodeCoords = new();
 
-    private void Awake()
+    [SerializeField] private UnitCube unitCubePref;
+    [SerializeField] private List<UnitCube> unitCubes = new();
+
+    public LevelData levelData;
+    [SerializeField] private string levelId = "1";
+
+    protected override void Awake()
     {
+        base.Awake();
         SpawnMapNode();
+    }
+
+    [Button]
+    public async UniTask LoadMap(LevelData levelData)
+    {
+        await UniTask.WaitUntil(() => mapNodes != null);
+        ClearUnitCubes();
+        this.levelData = levelData;
+        var cubeData = levelData.unitCubeData;
+        if (cubeData == null)
+            return;
+
+        for (var i = 0; i < cubeData.Length; i++)
+        {
+            var cube = Instantiate(unitCubePref);
+            cube.colorIndex = cubeData[i].colorIndex;
+            cube.transform.position = GetPosNode(cubeData[i].x, cubeData[i].y);
+            unitCubes.Add(cube);
+        }
+    }
+
+    private void ClearUnitCubes()
+    {
+        for (var i = 0; i < unitCubes.Count; i++)
+        {
+            if (unitCubes[i] == null)
+                continue;
+
+            if (Application.isPlaying)
+                Destroy(unitCubes[i].gameObject);
+            else
+                DestroyImmediate(unitCubes[i].gameObject);
+        }
+
+        unitCubes.Clear();
     }
 
     [Button]

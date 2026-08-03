@@ -66,6 +66,7 @@ public class SpaceManager : Singleton<SpaceManager>
             callBack?.Invoke(null);
             return;
         }
+        
         if (CheckSameColorWithOtherSlotSpace(cube.colorIndex,  out var colorIndex))
         {
             if (colorIndex >= slotSpaces.Count)
@@ -148,8 +149,6 @@ public class SpaceManager : Singleton<SpaceManager>
                 },
                 posComplete = slotSpaces[indexCheck + 1].transform.position + new Vector3(0, 1, 0)
             };
-
-            Debug.Log($"OnComplete {indexCheck}");
             CompleteAction.Instance.OnComplete(completeData);
             indexCheck += 3;
         }
@@ -194,14 +193,32 @@ public class SpaceManager : Singleton<SpaceManager>
         return null;
     }
 
-    private void MoveOtherCubeToNextSpace(int index)
+    private void MoveOtherCubeToNextSpace(int indexEnd)
     {
-        for (var i =  slotSpaces.Count - 2; i >= index; i--)
+        var slotIndex = slotSpaces.Count - 2;
+        while (slotIndex >= indexEnd)
         {
-            if (slotSpaces[i].unitCube == null) continue;
-            var cube = slotSpaces[i].unitCube;
-            slotSpaces[i].SetUnitCube(null);
-            cube.ActionGetSpaceCallBack(slotSpaces[i + 1]);
+            if (slotSpaces[slotIndex].unitCube == null)
+            {
+                slotIndex--;
+            }
+            else
+            {
+                var isNextSlotFree = slotSpaces[slotIndex + 1].IsCanAble();
+                if (!isNextSlotFree)
+                {
+                    slotIndex++;
+                }
+                else
+                {
+                    var cube = slotSpaces[slotIndex].unitCube;
+                    slotSpaces[slotIndex].SetUnitCube(null);
+                    slotSpaces[slotIndex].ChangeState(SlotSpaceState.Able);
+                    slotSpaces[slotIndex + 1].ChangeState(SlotSpaceState.Disable);
+                    cube.ActionGetSpaceCallBack(slotSpaces[slotIndex + 1]);
+                    slotIndex--;
+                } 
+            }
         }
     }
 }

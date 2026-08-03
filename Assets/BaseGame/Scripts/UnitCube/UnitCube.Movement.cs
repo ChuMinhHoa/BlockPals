@@ -6,7 +6,7 @@ public partial class UnitCube
 {
     [Header("Movement")]
     
-    [Range(0, 10f)]
+    [Range(0, 20f)]
     [SerializeField] public float moveSpeed;
     
     [Range(0, 10f)]

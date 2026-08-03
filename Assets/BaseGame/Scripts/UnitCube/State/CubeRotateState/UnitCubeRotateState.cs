@@ -55,7 +55,6 @@ public partial class UnitCube : UnitCubeRotateState.IUnitCubeHandle
 
     public UniTask UnitCubeRotateStateEnter(CancellationToken ct)
     {
-        Debug.Log("enter rotate!");
         rotateDone = false;
         directionForward = Vector3.forward;
         directionForward.y = 0f;

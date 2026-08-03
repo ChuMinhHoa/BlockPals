@@ -142,8 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitCube
   animator: {fileID: 8244496831319576637}
   moveToCompleteAnimation: {fileID: 1670592461231490415}
-  trsEffect: {fileID: 3133380095432034631, guid: 82cc817a617c26c4c90d47333bea4193, type: 3}
-  unitCubeStatus: 0
+  unitCubeStatus: 1
   mySlot: {fileID: 0}
   colorIndex: 0
   moveSpeed: 10
@@ -320,13 +319,13 @@ MonoBehaviour:
       outWeight: 0.5757448
     - serializedVersion: 3
       time: 0.5
-      value: 1
-      inSlope: -0.00089500105
-      outSlope: -0.00089500105
+      value: 0.5
+      inSlope: -0.00007381259
+      outSlope: -0.00007381259
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.39454135
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 0
