@@ -54,6 +54,10 @@ public partial class UnitCube : UnitCubeIdleState.IUnitCubeHandle
     public UniTask UnitCubeIdleStateEnter(CancellationToken ct)
     {
         ChangeAnim("Idle");
+        if (unitCubeStatus == UnitCubeStatus.ReadyCheck)
+        {
+            SpaceManager.Instance.OnCheckSpaceSlot();
+        }
         return UniTask.CompletedTask;
     }
 

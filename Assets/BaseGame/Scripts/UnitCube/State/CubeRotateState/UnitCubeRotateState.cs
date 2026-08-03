@@ -2,10 +2,25 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using Sirenix.OdinInspector;
 using TW.Utility.DesignPattern.UniTaskState;
+using Unity.Android.Gradle;
 using UnityEngine;
 
 public class UnitCubeRotateState : IState
 {
+    
+    public interface IUnitCubeHandle
+    {
+        UniTask UnitCubeRotateStateEnter(CancellationToken ct);
+        UniTask UnitCubeRotateStateUpdate(CancellationToken ct);
+        UniTask UnitCubeRotateStateExit(CancellationToken ct);
+    }
+    
+    public IUnitCubeHandle handle;
+
+    public UnitCubeRotateState(IUnitCubeHandle handle)
+    {
+        this.handle = handle;
+    }
 
     public UniTask OnEnter(CancellationToken ct)
     {
@@ -21,27 +36,16 @@ public class UnitCubeRotateState : IState
     {
         return handle.UnitCubeRotateStateExit(ct);
     }
-    
-    public interface IUnitCubeHandle
-    {
-        UniTask UnitCubeRotateStateEnter(CancellationToken ct);
-        UniTask UnitCubeRotateStateUpdate(CancellationToken ct);
-        UniTask UnitCubeRotateStateExit(CancellationToken ct);
-    }
-    
-    public IUnitCubeHandle handle;
-
-    public UnitCubeRotateState(IUnitCubeHandle handle)
-    {
-        this.handle = handle;
-    }
 }
 
 public partial class UnitCube : UnitCubeRotateState.IUnitCubeHandle
 {
     private UnitCubeRotateState unitCubeRotateStateCache;
     private UnitCubeRotateState UnitCubeRotateState => unitCubeRotateStateCache ?? new UnitCubeRotateState(this);
-
+    private bool rotateDone = false;
+    private Vector3 directionForward;
+    private Quaternion lookTarget;
+    
     [Button]
     private void ChangeToRotateState()
     {
@@ -51,21 +55,28 @@ public partial class UnitCube : UnitCubeRotateState.IUnitCubeHandle
 
     public UniTask UnitCubeRotateStateEnter(CancellationToken ct)
     {
+        Debug.Log("enter rotate!");
+        rotateDone = false;
+        directionForward = Vector3.forward;
+        directionForward.y = 0f;
+        lookTarget =  Quaternion.LookRotation(directionForward);
         return UniTask.CompletedTask;
     }
     
     public UniTask UnitCubeRotateStateUpdate(CancellationToken ct)
     {
-        var dir = Vector3.forward;
-        dir.y = 0f;
-        if (dir.sqrMagnitude > 0.001f)
+        if (directionForward.sqrMagnitude > 0.001f)
         {
-            var look = Quaternion.LookRotation(dir);
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, look, rotateSpeed * 100f * Time.deltaTime);
+                transform.rotation, lookTarget, rotateSpeed * 100f * Time.deltaTime);
         }
-
-        if (transform.eulerAngles == Vector3.zero)
+        else
+        {
+            BackToIdleState();
+            return UniTask.CompletedTask;
+        }
+        
+        if (Quaternion.Dot(transform.rotation, lookTarget) >= 1f)
         {
             BackToIdleState();
         }
@@ -80,6 +91,12 @@ public partial class UnitCube : UnitCubeRotateState.IUnitCubeHandle
 
     private void BackToIdleState()
     {
+        rotateDone = true;
+        if (actionMoveCallBack != null)
+        {
+            actionMoveCallBack.Invoke();
+            actionMoveCallBack = null;
+        }
         stateMachine.RequestTransition(UnitCubeIdleState);
     }
 }

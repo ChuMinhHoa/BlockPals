@@ -95,22 +95,16 @@ public partial class UnitCube : UnitCubeMoveState.IUnitCubeHandle
         
         if (Vector3.Distance(transform.position, nextPoint) < 0.001f)
             currentPathIndex++;
-        
         return UniTask.CompletedTask;
     }
 
     public UniTask UnitCubeMoveStateExit(CancellationToken ct)
     {
-        if (actionMoveCallBack != null)
-        {
-            actionMoveCallBack.Invoke();
-            actionMoveCallBack = null;
-        }
         return UniTask.CompletedTask;
     }
 
     private void EndMoveState()
     {
-        stateMachine.RequestTransition(UnitCubeIdleState);
+        ChangeToRotateState();
     }
 }

@@ -10,5 +10,6 @@ public class SlotSpaceAnim : MonoBehaviour
 
     public void DisableAnim()
     {
+        
     }
 }

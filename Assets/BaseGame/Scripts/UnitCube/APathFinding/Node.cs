@@ -21,10 +21,12 @@ public class Node : MonoBehaviour
     public Reactive<bool> able = new(true);
     [SerializeField] private SpriteRenderer sprRenderer;
     [SerializeField] private Sprite[] graphics;
+    [SerializeField] private bool disAbleSprRenderer;
 
     private void Start()
     {
         able.Subscribe(ChangeAble).AddTo(this);
+        sprRenderer.gameObject.SetActive(!disAbleSprRenderer);
     }
 
     private void ChangeAble(bool ableChange)
